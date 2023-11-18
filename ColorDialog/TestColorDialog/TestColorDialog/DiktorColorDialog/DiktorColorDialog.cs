@@ -15,6 +15,8 @@ namespace CustomColorDialog
 
         public event Action<Color> CurrentColorEvent;
         public Color CurrentColor = Color.Black;
+        public DialogResult DialogResultAsync = new DialogResult();
+        public bool DialogClosedAsync = false;
 
         private const int GA_ROOT = 2;
         private const int WM_CTLCOLOREDIT = 0x133;
@@ -29,7 +31,15 @@ namespace CustomColorDialog
             FullOpen = true;
         }
 
-        public async void ShowDialogAsync() => await Task.Run(() => { this.ShowDialog(); });
+        public async void ShowDialogAsync()
+            => await Task.Run(() =>
+            {
+                DialogClosedAsync = false;
+                DialogResultAsync = new DialogResult();
+
+                DialogResultAsync = this.ShowDialog();
+                DialogClosedAsync = true;
+            });
 
 
         /*protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
